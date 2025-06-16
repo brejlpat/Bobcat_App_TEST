@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS users_ad (
 INSERT OR IGNORE INTO users_ad (username, email, role)
 VALUES ('patrikbrejla', 'patrik.brejla@doosan.com', 'admin');
 
+INSERT OR IGNORE INTO users_ad (username, email, role)
+VALUES ('borekmiklas', 'borek.miklas@doosan.com', 'admin');
+
 -- Tabulka login
 CREATE TABLE IF NOT EXISTS login (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
