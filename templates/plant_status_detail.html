@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <section class="plant-map-section">
+        <h1>Detail of {{ line }} line</h1>
+
+        <div class="legend">
+            <h2>Legend:</h2>
+            <ul>
+                <li><span class="legend-color running"></span>RUNNING</li>
+                <li><span class="legend-color idle"></span>IDLE</li>
+                <li><span class="legend-color maintenance"></span>MAINTENANCE</li>
+                <li><span class="legend-color error"></span>ERROR</li>
+            </ul>
+        </div>
+
+        <div class="svg-wrapper" style="width: 90vw">
+            <object id="svg-plant" type="image/svg+xml" data="../static/svg/{{ line }}.svg" height="auto"></object>
+        </div>
+    </section>
+
+    <!-- Modal (popup) -->
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <span id="close-popup" class="popup-close">&times;</span>
+        <h3>Line status: <span id="popup-line"></span></h3>
+        <p>Status: <strong id="popup-status"></strong></p>
+        <a id="popup-link" href="#"><button id="popup-link-btn">Go to device</button></a>
+      </div>
+    </div>
+</div>
+
+<!-- Pop-up window + svg dynamika -->
+<script>
+  document.getElementById("svg-plant").addEventListener("load", function () {
+    const svgDoc = this.contentDocument;
+
+    const popup = document.getElementById("popup");
+    const popupContent = popup.querySelector(".popup-content");
+    const closeBtn = document.getElementById("close-popup");
+
+    const popupLine = document.createElement("h3");
+    const popupStatus = document.createElement("p");
+    const popupLink = document.createElement("a");
+    const popupButton = document.createElement("button");
+    popupButton.className = "role_button";
+
+    let popupLocked = false;
+
+    function showPopup(lineName) {
+      const img = document.createElement("img");
+      img.src = `../static/images/DEVICES/${lineName}.png`;
+      img.style.width = "100%";
+      img.style.borderRadius = "10px";
+      img.style.marginBottom = "1rem";
+
+      popupLine.textContent = `Zařízení: ${lineName}`;
+      popupLine.style.color = "white";
+      popupStatus.innerHTML = `<strong>Status:</strong> running`;
+
+      const desc = document.createElement("p");
+      desc.style.color = "#ddd";
+
+      popupLink.href = `/device_mapping/device_details?channel=${encodeURIComponent(lineName)}`;
+      popupButton.textContent = `Přejít na ${lineName}`;
+      popupLink.innerHTML = '';
+      popupLink.appendChild(popupButton);
+
+      popupContent.innerHTML = '';
+      popupContent.appendChild(closeBtn);
+      popupContent.appendChild(img);
+      popupContent.appendChild(popupLine);
+      popupContent.appendChild(popupStatus);
+      popupContent.appendChild(desc);
+      popupContent.appendChild(popupLink);
+
+      popup.classList.add("show");
+    }
+
+    closeBtn.onclick = (event) => {
+      event.stopPropagation();
+
+      // Spustit fade-out
+      popup.classList.add("fade-out");
+
+      // Po animaci (300ms) skrýt popup
+      setTimeout(() => {
+        popup.classList.remove("fade-out");
+        popup.classList.remove("show");
+        popupLocked = false;
+      }, 300);
+    };
+
+
+    const groups = svgDoc.querySelectorAll("g[id]");
+
+    groups.forEach(group => {
+      const groupId = group.id;
+      const rects = group.querySelectorAll("rect");
+
+      rects.forEach(rect => {
+        rect.style.cursor = "pointer";
+
+        rect.addEventListener("mouseenter", () => {
+          rect.style.stroke = "#ff0000";
+          rect.style.strokeWidth = "2";
+          if (!popupLocked) {
+            showPopup(groupId);
+          }
+        });
+
+        rect.addEventListener("mouseleave", () => {
+          rect.style.stroke = "none";
+          if (!popupLocked) {
+            popup.classList.add("fade-out");
+            setTimeout(() => {
+              popup.classList.remove("fade-out");
+              popup.classList.remove("show");
+            }, 300); // délka animace fadeOutPanel
+          }
+        });
+
+        rect.addEventListener("click", (e) => {
+          e.preventDefault();
+          popupLocked = true;
+          showPopup(groupId);
+        });
+      });
+    });
+  });
+</script>
+
+
+
+{% endblock %}

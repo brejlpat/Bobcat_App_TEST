@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <section class="plant-map-section">
+        <h1>Plant Line Status Map</h1>
+        <p>Click on a line to view its status & devices</p>
+        <p style="color: red !important">IN PROGRESS - only button for MEX line will take you further</p>
+
+        <div class="legend">
+            <h2>Legend:</h2>
+            <ul>
+                <li><span class="legend-color running"></span>RUNNING</li>
+                <li><span class="legend-color idle"></span>IDLE</li>
+                <li><span class="legend-color maintenance"></span>MAINTENANCE</li>
+                <li><span class="legend-color error"></span>ERROR</li>
+            </ul>
+        </div>
+
+        <div class="svg-wrapper">
+            <object id="svg-plant" type="image/svg+xml" data="../static/svg/plant_plan.svg" width="100%" height="auto"></object>
+        </div>
+    </section>
+
+
+    <!-- Modal (popup) -->
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <span id="close-popup" class="popup-close">&times;</span>
+        <h3>Line: <span id="popup-line"></span></h3>
+        <p>Status: <strong id="popup-status"></strong></p>
+        <a id="popup-link" href="#"><button id="popup-link-btn">Go to device</button></a>
+      </div>
+    </div>
+</div>
+<!-- Pop-up window -->
+<script>
+  document.getElementById("svg-plant").addEventListener("load", function () {
+    const svgDoc = this.contentDocument;
+    const statusData = {{ tags | tojson }};
+
+    const popup = document.getElementById("popup");
+    const popupLine = document.getElementById("popup-line");
+    const popupStatus = document.getElementById("popup-status");
+
+    const statusColors = {
+      RUNNING: "#4CAF50",
+      IDLE: "#2196F3",
+      MAINTENANCE: "#9E9E9E"
+    };
+
+    function showPopup(lineName, status) {
+      const normalized = ["RUNNING", "IDLE", "MAINTENANCE"].includes(status) ? status : "ERROR";
+      popupLine.textContent = lineName;
+      popupStatus.textContent = normalized;
+      popup.classList.add("show");
+      const popupLink = document.getElementById("popup-link");
+      popupLink.href = `/main/line_detail?line=${encodeURIComponent(lineName)}`;
+
+      const popupButton = document.getElementById("popup-link-btn");
+      popupButton.textContent = `Go to ${lineName}`;
+    }
+
+    document.getElementById("close-popup").addEventListener("click", (event) => {
+      event.stopPropagation();
+      popup.classList.add("fade-out");
+      setTimeout(() => {
+        popup.classList.remove("fade-out");
+        popup.classList.remove("show");
+        popupLocked = false;
+      }, 300); // trvání animace
+    });
+
+    statusData.forEach(({ name, value }) => {
+      const group = svgDoc.getElementById(name);
+      if (group) {
+        const rect = group.querySelector("rect");
+        if (rect) {
+          if (value === "RUNNING" || value === "IDLE" || value === "MAINTENANCE") {
+            rect.style.fill = statusColors[value];
+          } else {
+            rect.style.fill = "#f44336"; // ERROR – červená
+          }
+
+          rect.style.cursor = "pointer";
+          rect.addEventListener("mouseenter", () => {
+            rect.style.stroke = "#ff0000";
+            rect.style.strokeWidth = "2";
+          });
+          rect.addEventListener("mouseleave", () => {
+            rect.style.stroke = "none";
+          });
+        }
+
+        group.addEventListener("click", (e) => {
+          e.preventDefault();
+          showPopup(name, value);
+        });
+      }
+    });
+  });
+</script>
+
+<script>
+  // Automatické obnovení stránky každou minutu (60 000 ms)
+  setInterval(function () {
+    window.location.reload();
+  }, 300000);
+</script>
+
+{% endblock %}

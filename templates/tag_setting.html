@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Create new tag</h1>
+    <form method="post" action="/create_device/create_tag" class="form-grid">
+        <label for="channel_name">Channel:</label>
+        <input type="text" id="channel_name" name="channel_name" value="{{ channel_name }}" readonly>
+
+        <label for="device_name">Device:</label>
+        <input type="text" id="device_name" name="device_name" value="{{ device_name }}" readonly>
+
+        <label for="tag_name">Tag name:</label>
+        <input type="text" id="tag_name" name="tag_name">
+
+        <label for="tag_data_type">Tag data type:</label>
+        <input type="text" id="tag_data_type" name="tag_data_type">
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+
+        <button type="submit" class="centered-button">Create tag</button>
+    </form>
+</div>
+{% endblock %}

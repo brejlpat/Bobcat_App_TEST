@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Create new channel</h1>
+    <form method="post" action="/create_device/create_channel" class="form-grid">
+        <label for="channel_name">* Channel name:</label>
+        <input type="text" id="channel_name" name="channel_name" required>
+
+        <label for="driver">Driver:</label>
+        <input type="text" id="driver" name="driver" value="{{ driver }}" readonly>
+
+        {% if driver == "OPC UA Client" %}
+            <label for="endpoint_url">* Endpoint URL:</label>
+            <input type="text" id="endpoint_url" name="endpoint_url" placeholder="e.g. opc.tcp://10.52.32.214:4840" required>
+
+            <label for="opc_username">Authentication username</label>
+            <input type="text" id="opc_username" name="opc_username" placeholder="username">
+
+            <label for="opc_pass">Authentication password</label>
+            <input type="text" id="opc_pass" name="opc_pass" placeholder="password">
+
+        {% elif driver == "OPC DA Client" %}
+            <label for="channel_prog_id">* Channel program ID:</label>
+            <input type="text" id="channel_prog_id" name="channel_prog_id" placeholder="e.g. ABB.IRC5.OPC.Server.DA" required>
+        {% elif driver == "Allen-Bradley ControlLogix Ethernet" %}
+
+        {% elif driver == "Torque Tool Ethernet" %}
+
+        {% endif %}
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+
+        <button type="submit" class="centered-button">Create channel</button>
+    </form>
+</div>
+{% endblock %}

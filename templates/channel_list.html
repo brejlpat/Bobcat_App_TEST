@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: left">
+        <a href="javascript:history.back()" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+
+    <h1>Channel + device list</h1>
+    <a href="/device_mapping/channel_device_list" class="btn-admin">Sort by channel</a>
+    <a href="/device_mapping/driver_sorted" class="btn-admin">Sort by driver</a>
+    <table>
+        <tr class="thead">
+            <th>No.</th>
+            <th>Channel</th>
+            <th>Device</th>
+            <th>IP Address</th>
+            <th>Driver</th>
+            <th>Show details</th>
+        </tr>
+        {% for element in opc_devices %}
+        <tr>
+            <td>{{ element.No }}</td>
+            <td>{{ element.Channel }}</td>
+            <td>{{ element.Device }}</td>
+            <td>{{ element.IP }}</td>
+            <td>{{ element.Driver }}</td>
+            <td><a href="/device_mapping/device_details?channel={{ element.Channel }}&device={{ element.Device }}"><button>Go to</button></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+function confirmUserDelete(event, userId) {
+    event.preventDefault(); // Zabrání odeslání formuláře
+
+    const confirmation = prompt("Type 'Confirm' to delete this user:");
+    if (confirmation === "Confirm") {
+        window.location.href = `/admin/delete_account/${userId}`;
+    } else if (confirmation !== null) {
+        alert("Action cancelled or confirmation text was incorrect.");
+    }
+}
+</script>
+
+{% endblock %}

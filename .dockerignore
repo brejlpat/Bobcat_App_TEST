@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+.idea/
+.vscode/
+.git/
+*.zip
+*.tar
+*.gz
+certs/
+embedding_test/
+HEIC2PNG/
+ldap_test/
+opc_testing/
+static/images/

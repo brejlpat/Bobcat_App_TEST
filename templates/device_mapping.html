@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="container">
+    <h1>Device Mapping</h1>
+    <h2></h2>
+    <div class="device-links">
+        <a href="/device_mapping/device?line=MovingLine"><img src="../static/images/MovingLine-icon.png" alt="MovingLine"><p>MovingLine</p></a>
+        <a href="/device_mapping/device?line=MEX"><img src="../static/images/MEX-icon.png" alt=""><p>MEX</p></a>
+        <a href="/device_mapping/device?line=LDR"><img src="../static/images/LDR-icon.png" alt=""><p>LDR</p></a>
+        <a href="/device_mapping/device?line=CWL"><img src="../static/images/CWL-icon.png" alt=""><p>CWL</p></a>
+        <a href="/device_mapping/device?line=CAIRO"><img src="../static/images/CAIRO-icon.png" alt=""><p>CAIRO</p></a>
+        <a href="/device_mapping/device?line=WML"><img src="../static/images/WML-icon.png" alt=""><p>WML</p></a>
+        <a href="/device_mapping/device?line=PaintShop"><img src="../static/images/PaintShop-icon.png" alt=""><p>PaintShop</p></a>
+        <a href="/device_mapping/device?line=Bending"><img src="../static/images/TruBend-icon.png" alt=""><p>Bending</p></a>
+        <a href="/device_mapping/device?line=TruBend"><img src="../static/images/TruBend-icon.png" alt=""><p>TruBend</p></a>
+        <a href="/device_mapping/device?line=Laser"><img src="../static/images/Laser-icon.png" alt=""><p>Laser</p></a>
+    </div>
+
+    <div class="search_column">
+      <p>🔽 Search by a <strong>channel</strong> name or <strong>IP address</strong> 🔽</p>
+
+        <div class="toggle-container">
+          <div id="nameOption" class="toggle-option active" onclick="setViewMode('NAME')">NAME</div>
+          <div id="ipOption" class="toggle-option" onclick="setViewMode('IP')">IP ADDRESS</div>
+        </div>
+
+        <div class="search">
+            <form method="post" action="/device_mapping/search" class="search-form">
+                <input type="text" name="search_query" placeholder="Enter a keyword..." style="padding: 8px; width: 250px;">
+                <input type="hidden" name="search_mode" id="searchMode" value="NAME">
+                <button type="submit" style="padding: 8px;">Search</button>
+            </form>
+        </div>
+    <em>Click on your name in the top right corner and check <strong>Channels list</strong> to see all the channels.</em>
+    </div>
+
+    <section style="margin-top: 20px;">
+        <a href="/device_mapping/channel_setting"><button>ADD new device</button></a>
+    </section>
+
+</section>
+
+<script>
+// Funkce pro vyhledávání zařízení podle názvu linky
+function searchLine() {
+  let input = document.getElementById("line-search-input").value.trim();
+  if (input !== "") {
+    window.location.href = `/device_mapping/device?line=${encodeURIComponent(input)}`;
+  } else {
+    alert("Please enter a line name to search.");
+  }
+}
+
+// Naslouchání stisku klávesy Enter
+document.getElementById("line-search-input").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // Zabrání odeslání formuláře nebo jinému výchozímu chování
+    searchLine();
+  }
+});
+</script>
+
+<script>
+let viewMode = "NAME"; // defaultní hodnota
+
+function setViewMode(mode) {
+  viewMode = mode;
+  document.getElementById("nameOption").classList.toggle("active", mode === "NAME");
+  document.getElementById("ipOption").classList.toggle("active", mode === "IP");
+
+  document.getElementById("searchMode").value = viewMode;
+}
+</script>
+{% endblock %}

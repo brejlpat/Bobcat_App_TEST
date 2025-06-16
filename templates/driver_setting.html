@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Create new channel</h1>
+    <form method="post" action="/create_device/channel" class="form-grid">
+
+        <label for="driver">Choose the driver:</label>
+        <select name="driver" id="driver">
+            <option value="OPC UA Client">OPC UA Client</option>
+            <option value="OPC DA Client">OPC DA Client</option>
+            <option value="Allen-Bradley ControlLogix Ethernet">Allen-Bradley ControlLogix Ethernet</option>
+            <option value="Torque Tool Ethernet">Torque Tool Ethernet</option>
+        </select>
+        <p>
+            ODBC Client driver must be created dirrectly in KepserverEX. <br>
+            If you need support, please contact <a href="mailto:patrik.brejla@doosan.com">patrik.brejla@doosan.com</a>
+        </p>
+        <button type="submit" class="centered-button">Next</button>
+    </form>
+</div>
+{% endblock %}

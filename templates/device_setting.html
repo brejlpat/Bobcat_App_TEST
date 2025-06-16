@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Create new device</h1>
+    <form method="post" action="/create_device/create_device" class="form-grid" enctype="multipart/form-data">
+        <label for="driver">Driver:</label>
+        <input type="text" id="driver" name="driver" value="{{ driver }}" readonly>
+
+        <label for="channel_name">Channel name:</label>
+        <input type="text" id="channel_name" name="channel_name" readonly value="{{ channel_name }}">
+
+        <label for="device_name">* Device name:</label>
+        <input type="text" id="device_name" name="device_name" required>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+
+        {% if driver == "OPC UA Client" %}
+
+        {% elif driver == "OPC DA Client" %}
+
+        {% elif driver == "Allen-Bradley ControlLogix Ethernet" %}
+            <label for="ip_address_AB">* IP address:</label>
+            <input type="text" id="ip_address_AB" name="ip_address_AB" placeholder="Format: <127.0.0.1>,1,0" required>
+
+            <label for="device_port">* Device port number:</label>
+            <input type="text" id="device_port" name="device_port" placeholder="device port number" required>
+
+            <label for="enet_port">* Enet port number:</label>
+            <input type="text" id="enet_port" name="enet_port" placeholder="enet port number" required>
+
+            <select name="model" id="model">
+                <option value="0">ControlLogix 5500</option>
+                <option value="1">CompactLogix 5300</option>
+                <option value="2">FlexLogix 5400</option>
+                <option value="3">SoftLogix 5800</option>
+                <option value="4">DH+ Gateway: PLC-5</option>
+                <option value="5">DH+ Gateway: SLC 5/04</option>
+                <option value="6">ControlNet Gateway: PLC-5C</option>
+                <option value="7">EIP Gateway: MicroLogix</option>
+                <option value="8">EIP Gateway: SLC Fixed</option>
+                <option value="9">EIP Gateway: SLC Modular</option>
+                <option value="10">EIP Gateway: PLC-5</option>
+                <option value="11">Serial Gateway: ControlLogix</option>
+                <option value="12">Serial Gateway: CompactLogix</option>
+                <option value="13">Serial Gateway: FlexLogix</option>
+                <option value="14">Serial Gateway: SoftLogix</option>
+                <option value="15">ENI: ControlLogix 5500</option>
+                <option value="16">ENI: CompactLogix 5300</option>
+                <option value="17">ENI: FlexLogix 5400</option>
+                <option value="18">ENI: MicroLogix</option>
+                <option value="19">ENI: SLC 500 Fixed I/O</option>
+                <option value="20">ENI: SLC 500 Modular I/O</option>
+                <option value="21">ENI: PLC-5</option>
+                <option value="22">MicroLogix 1100</option>
+                <option value="23">MicroLogix 1400</option>
+            </select>
+
+        {% elif driver == "Torque Tool Ethernet" %}
+            <label for="ip_address_TT">* IP address:</label>
+            <input type="text" id="ip_address_TT" name="ip_address_TT" placeholder="Format 127.0.0.1" required>
+
+            <label for="device_port">* Device port number:</label>
+            <input type="text" id="device_port" name="device_port" placeholder="device port number" required>
+        {% endif %}
+
+        <label for="image">Upload image (.png):</label>
+        <input type="file" id="image" name="image" accept="image/png" required>
+
+        <!-- hidden input pro 'line' -->
+        <input type="hidden" name="line" value="{{ line }}">
+
+        <button type="submit" class="centered-button">Create device</button>
+    </form>
+</div>
+{% endblock %}

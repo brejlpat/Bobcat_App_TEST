@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: left">
+        <a href="javascript:history.back()" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+    <h1>Edit device: {{ device_info.device }}</h1>
+    <h2>Channel: {{ device_info.channel }}</h2>
+
+    <form method="post" action="/device_mapping/edit_device?channel={{ device_info.channel }}&device={{ device_info.device }}&project_id={{ project_id }}&device_id={{ device_info.device_id }}">
+    <div class="form-section">
+        {% for key, value in payload.items() %}
+            <div class="form-group">
+                {% if key == "servermain.MULTIPLE_TYPES_DEVICE_DRIVER" or key == "PROJECT_ID" or key == "servermain.DEVICE_UNIQUE_ID" or key == "servermain.DEVICE_CHANNEL_ASSIGNMENT" %}
+                    <label for="{{ key }}">{{ key }}</label>
+                    <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}" readonly>
+                {% elif key == "servermain.DEVICE_MODEL" and driver != "Allen-Bradley ControlLogix Ethernet" %}
+                    <label for="{{ key }}">{{ key }}</label>
+                    <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}" readonly>
+                {% else %}
+                    <label for="{{ key }}">{{ key }}</label>
+                    <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-admin" style="margin-top: 20px;">Save changes</button>
+    </div>
+    </form>
+</div>
+{% endblock %}
+

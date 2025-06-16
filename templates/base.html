@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="shortcut icon" href="../static/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min"></script>
+</head>
+<body>
+    {% if status_message %}
+        <div id="toast" class="toast">
+            {{ status_message }}
+        </div>
+    {% endif %}
+    <div class="page-wrapper">
+    <!-- Navigační panel -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <!-- Hamburger ikonka -->
+            <button id="hamburger-toggle" class="hamburger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigace (přesunuta do panelu vlevo) -->
+            <div id="side-panel" class="side-panel">
+                <!-- Logo-->
+                <a href="/main/home">
+                    <img src="/static/images/bobcat_logo.png" alt="Home" class="logo">
+                </a>
+                <a href="/automation/dashboard"><i class="fas fa-cogs"></i> Automation</a>
+                <a href="#"><i class="fas fa-industry"></i> CNC Machine</a>
+                <a href="/device_mapping/lines"><i class="fas fa-network-wired"></i> Device Mapping</a>
+                <a href="/main/plant_status"><i class="fas fa-map"></i> Plant Status</a>
+            </div>
+            <!-- Překryv -->
+            <div id="side-overlay" class="side-overlay"></div>
+        </div>
+
+        <!-- Prostřední text -->
+        <div class="nav-center hide-on-mobile">
+            <span class="app-title">DOOSAN Bobcat – Automation Portal</span>
+        </div>
+
+        <div class="nav-right">
+            <div class="user-menu">
+                <button id="user-toggle" type="button">
+                    <img src="/static/images/user_icon.png" alt="User Icon" class="user-icon">
+                    <span class="username">{{ username }}</span>
+                </button>
+                <div id="dropdown-menu" class="dropdown-hidden">
+                    {% if role == "admin" %}
+                        <a href="/admin/users" class="dropdown-btn">Account Management</a>
+                        <a href="/admin/device_log" class="dropdown-btn">Devices log</a>
+                        <a href="/admin/users_log" class="dropdown-btn">Users log</a>
+                        <a href="/admin/ai_model" class="dropdown-btn">AI model</a>
+                    {% endif %}
+                    <a href="/device_mapping/channel_device_list" class="dropdown-btn">Channels list</a>
+                    <a href="/auth/logout" class="dropdown-btn">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <div id="loader-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); z-index:1000; justify-content:center; align-items:center;">
+        <img src="/static/images/logo.png" alt="Loading..." id="bobcat-loader">
+        <p style="padding: 10px;"></p>
+        <h2>Loading...</h2>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>DOOSAN Bobcat Web App &copy; {{ current_year or '2025' }} | Developed by the Automation & Digitalization Team</p>
+            <p>Support: <a href="mailto:patrik.brejla@doosan.com">patrik.brejla@doosan.com</a></p>
+        </div>
+    </footer>
+    </div>
+
+<script>
+    // Automatické skrytí flash zprávy po 3 vteřinách
+    setTimeout(() => {
+        const flash = document.getElementById("flash-message");
+        if (flash) {
+            flash.style.transition = "opacity 0.5s ease";
+            flash.style.opacity = 0;
+            setTimeout(() => flash.remove(), 500);
+        }
+    }, 3000);
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const loader = document.getElementById("loader-overlay");
+
+    function showLoader() {
+        loader.style.display = "flex";
+    }
+
+    // Detekce načtení stránky z historie (zpět/vpřed)
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted || window.performance && window.performance.getEntriesByType("navigation")[0].type === "back_forward") {
+            if (loader) {
+                loader.style.display = "none"; // Skryje loader při navigaci z historie
+            }
+        }
+    });
+
+    // Formuláře
+    document.querySelectorAll("form").forEach(form => {
+        form.addEventListener("submit", showLoader);
+    });
+
+    // Odkazy kromě target _blank nebo href #
+    document.querySelectorAll("a[href]").forEach(link => {
+        link.addEventListener("click", function (event) {
+            const href = link.getAttribute("href") || "";
+            const target = link.getAttribute("target");
+            const id = link.getAttribute("id");
+
+            if (!href.startsWith("#") && target !== "_blank" && id !== "custom-back-button" && id !== "copy-btn") {
+                showLoader();
+            }
+        });
+    });
+
+    // Tlačítka kromě hamburgeru
+    document.querySelectorAll("button").forEach(button => {
+        const type = button.getAttribute("type");
+        const isHamburger = button.id === "hamburger-toggle";
+        if ((type === null || type === "submit") && !isHamburger) {
+            button.addEventListener("click", showLoader);
+        }
+    });
+});
+</script>
+
+
+<script>
+    // Záloha skrytí toastu
+    setTimeout(function() {
+        const toast = document.getElementById("toast");
+        if (toast) {
+            toast.style.display = "none";
+        }
+    }, 3000);
+</script>
+
+    <!-- Hamburger menu -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("user-toggle");
+        const menu = document.getElementById("dropdown-menu");
+
+        toggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            menu.classList.toggle("dropdown-visible");
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!toggle.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.remove("dropdown-visible");
+            }
+        });
+
+        // Dynamické přizpůsobení navbaru při změně velikosti okna
+        function adjustNavbar() {
+            const nav = document.querySelector('.navbar');
+            if (window.innerWidth <= 600) {
+                nav.classList.add('navbar-mobile');
+            } else {
+                nav.classList.remove('navbar-mobile');
+            }
+        }
+
+        window.addEventListener("resize", adjustNavbar);
+        adjustNavbar();
+    });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const hamburger = document.getElementById("hamburger-toggle");
+    const panel = document.getElementById("side-panel");
+    const overlay = document.getElementById("side-overlay");
+
+    hamburger.addEventListener("click", () => {
+        panel.classList.toggle("open");
+        overlay.classList.toggle("show");
+    });
+
+    overlay.addEventListener("click", () => {
+        panel.classList.remove("open");
+        overlay.classList.remove("show");
+    });
+});
+</script>
+
+</body>
+</html>

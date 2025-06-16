@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: left">
+        <a href="javascript:history.back()" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+
+    <h1>Device modification log</h1>
+    <table>
+        <tr class="thead">
+            <th>ID</th>
+            <th>Username</th>
+            <th>Channel</th>
+            <th>Payload</th>
+            <th>Date</th>
+            <th>Action</th>
+            <th>Driver</th>
+        </tr>
+        {% for df_log in df_logs %}
+        <tr>
+            <td>{{ df_log.ID }}</td>
+            <td>{{ df_log.Username }}</td>
+            <td>{{ df_log.Channel }}</td>
+            <td>{{ df_log.Payload }}</td>
+            <td>{{ df_log.Date }}</td>
+            <td>{{ df_log.Action }}</td>
+            <td>{{ df_log.Driver }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+function confirmUserDelete(event, userId) {
+    event.preventDefault(); // Zabrání odeslání formuláře
+
+    const confirmation = prompt("Type 'Confirm' to delete this user:");
+    if (confirmation === "Confirm") {
+        window.location.href = `/admin/delete_account/${userId}`;
+    } else if (confirmation !== null) {
+        alert("Action cancelled or confirmation text was incorrect.");
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <title>Žádost o přístup</title>
+    <style>
+        body {
+            background-image: url('../static/images/bg1.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center -68px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    {% if status_message %}
+        <div id="toast" class="toast">
+            {{ status_message }}
+        </div>
+    {% endif %}
+
+    <div class="body">
+        <div class="fade-section">
+            <div class="container" style="width: 30%; margin: 0 auto;">
+                <h1>Request for the access</h1>
+                <p>Fill in you company e-mail and your request will be sent to the administrator.</p>
+
+                <form action="/auth/register" method="post">
+                    <label for="email">Use this email format: username@doosan.com</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <button type="submit">Send request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Záloha skrytí toastu
+    setTimeout(function() {
+        const toast = document.getElementById("toast");
+        if (toast) {
+            toast.style.display = "none";
+        }
+    }, 3000);
+</script>
+</body>
+</html>

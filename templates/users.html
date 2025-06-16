@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: left">
+        <a href="javascript:history.back()" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+
+    <h1>Account management</h1>
+    <table>
+        <tr class="thead">
+            <th>ID</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        {% for user in df_users %}
+        <tr>
+            <td>{{ user.ID }}</td>
+            <td>{{ user.Email }}</td>
+            <td>{{ user.Username }}</td>
+            <td>{{ user.Role }}</td>
+            <td>
+                <div class="role_buttons">
+                    <form action="/admin/set_admin/{{ user.ID }}"><button class="role_button">SET Admin</button></form>
+                    <form action="/admin/set_production/{{ user.ID }}"><button class="role_button">SET Production</button></form>
+                    <form action="/admin/set_user/{{ user.ID }}"><button class="role_button">SET User</button></form>
+                    <form><button type="button" class="role_button btn-delete" onclick="confirmUserDelete(event, {{ user.ID }})">DELETE Account</button></form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <h2>Add new user</h2>
+    <form action="/admin/add_user" method="POST">
+        <label for="email">Email format: username@doosan.com</label>
+        <input type="text" id="email" name="email" required style="width: 50%; margin-left: auto; margin-right: auto; display: block;">
+        <button type="submit" style="width: 50%; margin-left: auto; margin-right: auto; display: block;">Add User</button>
+    </form>
+</div>
+
+<script>
+function confirmUserDelete(event, userId) {
+    event.preventDefault(); // Zabrání odeslání formuláře
+
+    const confirmation = prompt("Type 'Confirm' to delete this user:");
+    if (confirmation === "Confirm") {
+        window.location.href = `/admin/delete_account/${userId}`;
+    } else if (confirmation !== null) {
+        alert("Action cancelled or confirmation text was incorrect.");
+    }
+}
+</script>
+
+{% endblock %}

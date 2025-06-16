@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div style="text-align: left">
+        <a href="javascript:history.back()" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+    <h1>Device Details</h1>
+    <div class="device-details">
+        <h2>Channel: {{ device_info.channel }}</h2>
+        <h2>Device: {{ device_info.device }}</h2>
+        <h3>Driver: {{ driver }}</h3>
+        <h3>
+            IP address: <span id="device-ip">{{ device_info.device_id }}</span>
+            <button type="button" onclick="copyToClipboard(event)" class="copy-btn" id="copy-btn" title="Copy to clipboard">📋</button>
+        </h3>
+        <h3>Device port: {{ device_port }}</h3>
+
+        <div class="icons-section">
+            <a href="/device_mapping/show_tags?channel={{ device_info.channel }}&device={{ device_info.device }}&device_id={{ device_info.device_id }}" class="btn-admin">Show tags</a>
+            {% if role == "admin" %}
+                <a href="/device_mapping/edit_device?channel={{ device_info.channel }}&device={{ device_info.device }}&device_id={{ device_info.device_id }}" class="btn-admin">Edit device</a>
+                <a href="/device_mapping/edit_channel?channel={{ device_info.channel }}&device={{ device_info.device }}&device_id={{ device_info.device_id }}" class="btn-admin">Edit channel</a>
+                <a href="/device_mapping/edit_picture?channel={{ device_info.channel }}&device={{ device_info.device }}&device_id={{ device_info.device_id }}" class="btn-admin">Change picture</a>
+                <a href="#" class="btn-admin" onclick="confirmDelete('{{ device_info.channel }}', '{{ device_info.device }}')">Delete device</a>
+            {% endif %}
+            <a href="/device_mapping/device_details?channel={{ device_info.channel }}&device={{ device_info.device }}&device_id={{ device_info.device_id }}&line={{ line }}" class="btn-admin">Refresh</a>
+        </div>
+        <p style="padding: 10px"> </p>
+        {% if line == "Laser" %}
+            <img src="/static/images/DEVICES_MAP/{{ device_info.device }}.png" alt="Channel: {{ device_info.channel }}" style="width: auto; height: 40rem;">
+        {% else %}
+            <img src="/static/images/DEVICES_MAP/{{ device_info.channel }}.png" alt="Channel: {{ device_info.channel }}" style="width: auto; height: 40rem;">
+        {% endif %}
+
+        {% if tags %}
+            <h2>Tag list:</h2>
+            <table border="1" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tag in tags %}
+                        <tr>
+                            <td>{{ tag.name }}</td>
+                            <td>{{ tag.value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        <p style="padding: 5px"></p>
+        <a href="/device_mapping/cancel_tags?channel={{ device_info.channel }}&device={{ device_info.device }}&device_id={{ device_info.device_id }}"><button>Close tags</button></a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Funkce pro potvrzení smazání zařízení
+  function confirmDelete(channel, device) {
+    const userInput = prompt("Type 'Confirm' to delete the device:");
+
+    // Kontrola, zda uživatel zadal správný text
+    if (userInput === "Confirm") {
+      // Přesměrování na delete_device
+      window.location.href = `/device_mapping/delete_device?channel=${encodeURIComponent(channel)}&device=${encodeURIComponent(device)}`;
+    } else if (userInput !== null) {
+      alert("Action cancelled or confirmation text was incorrect.");
+    }
+    // pokud klikne na Cancel v promptu, nic se neděje
+  }
+</script>
+
+<script>
+function copyToClipboard(event) {
+    event.preventDefault();       // 🛡️ jistota
+    event.stopPropagation();      // 🛡️ zabrání propadnutí na body listener
+    const ip = document.getElementById("device-ip").innerText;
+    navigator.clipboard.writeText(ip).then(() => {
+        const toast = document.createElement("div");
+        toast.innerText = "Copied to clipboard!";
+        toast.className = "toast";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    });
+}
+
+</script>
+
+{% endblock %}

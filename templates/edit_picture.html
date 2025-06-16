@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: left">
+        <a href="javascript:history.back()" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+    <h1>Edit channel: {{ device_info.channel }}</h1>
+    <h2>Device: {{ device_info.device }}</h2>
+
+<form method="post" enctype="multipart/form-data" action="/device_mapping/upload_picture?channel={{ device_info.channel }}&device={{ device_info.device }}&project_id={{ project_id }}&device_id={{ device_info.device_id }}">
+    <div class="form-section">
+        <div class="form-group">
+            <label class="file-label">Upload new image (.png):</label>
+
+            <!-- Skrytý input -->
+            <input type="file" id="image" name="image" accept="image/png" required hidden>
+
+            <!-- Stylované tlačítko jako label -->
+            <label for="image" class="custom-file-upload">Choose file</label>
+            <span id="file-chosen">No file chosen</span>
+        </div>
+
+        <button type="submit" class="btn-admin" style="margin-top: 20px;">Save changes</button>
+    </div>
+</form>
+
+
+</div>
+
+<script>
+    const input = document.getElementById("image");
+    const fileChosen = document.getElementById("file-chosen");
+
+    input.addEventListener("change", function () {
+        fileChosen.textContent = this.files.length > 0 ? this.files[0].name : "No file chosen";
+    });
+</script>
+
+
+
+{% endblock %}
+

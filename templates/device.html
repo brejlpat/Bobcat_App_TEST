@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div style="text-align: left">
+        <a href="/device_mapping/lines" class="btn-back"><img src="../static/images/back-btn.png" alt="Back"></a>
+    </div>
+
+    <h1>{{ line }}</h1>
+    <h2>KEPserverEX</h2>
+
+    <!-- Table for checking the cosine distance in searching algorythm
+    <table>
+    {% for device in opc_devices %}
+        <tr>
+            <td>{{ device.channel }}</td>
+            <td>{{ device.device }}</td>
+            {% if device.distance %}
+            <td>{{ '{:.4f}'.format(device.distance) }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>-->
+
+    <div id="opc-table">
+        {% for item in opc_devices %}
+            <a href="/device_mapping/device_details?channel={{ item.channel }}&device={{ item.device }}">
+                <div style="border: 1px solid #ccc; padding: 10px; border-radius: 10px; text-align: center;">
+                    <h2>{{ item.channel }}</h2>
+                    <h3>Device:<br>{{ item.device }}</h3>
+                    {% if line == "Laser" %}
+                        <img src="/static/images/DEVICES_MAP/{{ item.device }}.png" alt="Channel: {{ item.channel }}">
+                    {% else %}
+                        <img src="/static/images/DEVICES_MAP/{{ item.channel }}.png" alt="Channel: {{ item.channel }}">
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="loader-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.7); z-index:1000; justify-content:center; align-items:center;">
+    <img src="/static/images/logo.png" alt="Loading..." id="bobcat-loader">
+    <p style="padding: 10px;"></p>
+    <h2>Loading...</h2>
+</div>
+
+{% endblock %}

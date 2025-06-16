@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}">
+    <link rel="shortcut icon" href="{{ request.url_for('static', path='images/favicon.ico') }}" type="image/x-icon">
+    <title>Doosan Bobcat App</title>
+    <style>
+        body {
+            background-image: url('../static/images/bg1.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center -68px;
+            height: auto;
+        }
+        a {
+            color: black;
+            transition: color 0.3s;
+            font-size: 1.2em;
+        }
+        a:hover {
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    {% if status_message %}
+        <div id="toast" class="toast">
+            {{ status_message }}
+        </div>
+    {% endif %}
+    <div class="body">
+        <div class="fade-section">
+            <div class="container" style="max-width: 400px;">
+                <h2>Login to DOOSAN Bobcat Portal</h2>
+
+                <form action="/auth/login" method="post">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit">Login</button>
+                </form>
+
+                <br>
+                <a href="/auth/register">REQUEST FOR ACCESS</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Záloha skrytí toastu
+    setTimeout(function() {
+        const toast = document.getElementById("toast");
+        if (toast) {
+            toast.style.display = "none";
+        }
+    }, 3000);
+</script>
+</body>
+</html>
