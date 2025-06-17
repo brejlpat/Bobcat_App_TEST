@@ -44,8 +44,6 @@ templates = Jinja2Templates(directory="templates")
 opc_client = None
 status_message = "❌ Disconnected"
 
-model = SentenceTransformer("all-MiniLM-L6-v2")  # model for search bar
-
 
 @router.get("/lines", response_class=HTMLResponse)
 async def devices(request: Request, user: User = Depends(get_current_user)):

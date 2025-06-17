@@ -33,8 +33,6 @@ cur = conn.cursor()
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
-
 
 @router.post("/channel")
 async def channel(

@@ -66,7 +66,6 @@ cur = conn.cursor()
 # LDAP parameters
 LDAP_SERVER = 'ldaps://corp.doosan.com'
 BASE_DN = 'DC=corp,DC=doosan,DC=com'
-
 # JWT konfigurace
 # JWT configuration
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
