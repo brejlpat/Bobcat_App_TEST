@@ -81,7 +81,7 @@ def update_user_role(user_id: int, role: str):
     Updates the user's role in the database.
     """
 
-    cur.execute("UPDATE users_ad SET role = %s WHERE id = %s", (role, user_id))
+    cur.execute("UPDATE users_ad SET role = ? WHERE id = ?", (role, user_id))
     conn.commit()
 
 
@@ -142,7 +142,7 @@ async def delete_account(user_ID: int, user: User = Depends(get_current_user)):
     if user.role != "admin":
         raise HTTPException(status_code=403, detail="Only admin can perform this action")
     try:
-        cur.execute("DELETE FROM users_ad WHERE id = %s", (user_ID,))
+        cur.execute("DELETE FROM users_ad WHERE id = ?", (user_ID,))
         conn.commit()
         msg = "User deleted successfully ✅"
     except Exception as e:
@@ -167,7 +167,7 @@ async def add_user(request: Request, email: str = Form(...), user: User = Depend
         })
 
     try:
-        cur.execute("INSERT INTO users_ad (email) VALUES (%s)", (email,))
+        cur.execute("INSERT INTO users_ad (email) VALUES (?)", (email,))
         conn.commit()
 
         msg = EmailMessage()

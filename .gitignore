@@ -3,6 +3,7 @@ venv
 config.ini
 .env
 certs_dbr
+certs_dbr.zip
 certs
 __pycache__
 DEV_CODES

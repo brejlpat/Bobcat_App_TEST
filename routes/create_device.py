@@ -219,7 +219,7 @@ async def create_device(
 
     if response.status_code == 201:
         status_message = f"✅ Device '{device_name}' was successfully created in channel '{channel_name}'!"
-        cur.execute("INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (%s, %s, %s, %s, %s)",
+        cur.execute("INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (?, ?, ?, ?, ?)",
                     (user.username, channel_name, json.dumps(sql_payload), "CREATE", driver))
         conn.commit()
     else:
@@ -238,7 +238,7 @@ async def create_device(
     channel_name_list = [channel_name]
     embedding = model.encode(channel_name_list)[0]
     vector_str = json.dumps(embedding.tolist())
-    cur.execute("INSERT INTO embeddings (channel, device, embedding, ip_address) VALUES (%s, %s, %s, %s)",
+    cur.execute("INSERT INTO embeddings (channel, device, embedding, ip_address) VALUES (?, ?, ?, ?)",
                 (channel_name, device_name, vector_str, ip_address))
     conn.commit()
 

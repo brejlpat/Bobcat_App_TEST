@@ -278,7 +278,7 @@ async def delete_device(request: Request, user: User = Depends(get_current_user)
     if response.status_code == 200:
         status_message = "✅ Device deleted successfully."
         cur.execute(
-            "INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (?, ?, ?, ?, ?)",
             (user.username, channel, json.dumps(delete_json), "DELETE", driver)
         )
         conn.commit()
@@ -286,7 +286,7 @@ async def delete_device(request: Request, user: User = Depends(get_current_user)
         status_message = "Failed to delete device."
 
     # delete from DB from table embeddings
-    cur.execute("DELETE FROM embeddings WHERE channel = %s AND device = %s", (channel, device))
+    cur.execute("DELETE FROM embeddings WHERE channel = ? AND device = ?", (channel, device))
     conn.commit()
 
     return templates.TemplateResponse("device_mapping.html", {"request": request,
@@ -559,15 +559,15 @@ async def edit_device_post(request: Request, user: User = Depends(get_current_us
     response = requests.put(url, headers=headers, data=json.dumps(payload), auth=(username, password))
     # Výstup
     if payload.get("servermain.DEVICE_ID_STRING"):
-        cur.execute("UPDATE embeddings SET ip_address = %s WHERE channel = %s",
+        cur.execute("UPDATE embeddings SET ip_address = ? WHERE channel = ?",
                     (payload["servermain.DEVICE_ID_STRING"], channel))
     if payload.get("common.ALLTYPES_NAME"):
-        cur.execute("UPDATE embeddings SET device = %s WHERE channel = %s",
+        cur.execute("UPDATE embeddings SET device = ? WHERE channel = ?",
                     (payload["common.ALLTYPES_NAME"], channel))
     if response.status_code == 200:
         status_message = f"✅ Device was successfully edited!\nTo see the changes you need to disconnect and connect again."
         cur.execute(
-            "INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (?, ?, ?, ?, ?)",
             (user.username, channel, json.dumps(log_payload), "EDIT", driver)
         )
         conn.commit()
@@ -721,7 +721,7 @@ async def edit_channel_post(request: Request, user: User = Depends(get_current_u
     if response.status_code == 200:
         status_message = f"✅ Device was successfully edited!\nTo see the changes you need to disconnect and connect again."
         cur.execute(
-            "INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO device_edit (username, channel_name, payload, action, driver) VALUES (?, ?, ?, ?, ?)",
             (user.username, channel, json.dumps(log_payload), "EDIT", driver)
         )
         conn.commit()

@@ -331,29 +331,17 @@ async def register_post(request: Request, email: str = Form(...)):
     """
 
     try:
-        msg = EmailMessage()
-        msg['Subject'] = 'New Access Request – Doosan Bobcat Web Application'
-        msg['From'] = 'webtest.mail@seznam.cz'
-        msg['To'] = 'patrik.brejla@doosan.com' # admin email
-        msg.set_content(
-            f"""Hello,
-        
-        A user with the email address {email} has submitted a request to access the internal Doosan Bobcat web application.
-        
-        Please review and approve the request in the account management section.
-        
-        Best regards,
-        Bobcat Automation Team"""
-        )
-
-        with smtplib.SMTP_SSL("smtp.seznam.cz", 465) as smtp:
-            smtp.login("webtest.mail@seznam.cz", os.getenv("mail_password"))
-            smtp.send_message(msg)
-
-        status_message = "Request sent to administrator."
+        if not get_user_from_db(email):
+            cur.execute("INSERT INTO users_ad (email) VALUES (?)", (email,))
+            conn.commit()
+            status_message = "You´ve been successfully registered"
+        else:
+            status_message = "You are already registered in the application"
+            return templates.TemplateResponse("login.html", {"request": request,
+                                                             "status_message": status_message})
 
     except Exception as e:
-        status_message = "Failed to send email: " + str(e)
+        status_message = "Failed to register: " + str(e)
 
     return templates.TemplateResponse("login.html", {"request": request,
                                                      "status_message": status_message})
